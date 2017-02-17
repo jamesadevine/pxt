@@ -71,10 +71,11 @@ namespace pxt.analytics {
         }
 
         window.addEventListener("message", (event:any)=>{
+            console.log("RECIEVED", event);
+
             if(event.type !== undefined && event.type === "analytics")
             {
-                let evt: pxt.analytics.TrackedEvent = event;
-                window.trackingManager.trackEvent(SIMULATOR_NAMESPACE, event);
+                window.trackingManager.trackEvent(SIMULATOR_NAMESPACE, new pxt.analytics.TrackedEvent(event.type, event.data));
             }
         }, false);
 

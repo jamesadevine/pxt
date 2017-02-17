@@ -53,7 +53,6 @@ namespace pxt.storage {
             keys.forEach(key => window.localStorage.removeItem(key));
         }
     }
-
     export function storageId(): string {
         const id = pxt.appTarget ? pxt.appTarget.id : (<any>window).pxtConfig ? (<any>window).pxtConfig.targetId : '';
         return id;

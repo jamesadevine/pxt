@@ -1,6 +1,7 @@
 /// <reference path="../pxteditor/localStorage.ts" />
 
 namespace pxt.analytics {
+
     export class TrackedEvent
     {
         type: string;
