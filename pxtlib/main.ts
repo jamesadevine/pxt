@@ -47,6 +47,7 @@ namespace pxt {
         ? (msg) => {
             if (pxt.options.debug)
                 console.debug(msg);
+
         } : () => { };
     export var log: (msg: any) => void = typeof console !== "undefined" && !!console.log
         ? (msg) => {

@@ -26,6 +26,7 @@ namespace pxt.storage {
     class LocalStorage implements IStorage {
 
         constructor(private storageId: string) {
+            console.log("SID ", storageId);
         }
 
         targetKey(key: string): string {
@@ -64,14 +65,12 @@ namespace pxt.storage {
         // test if local storage is supported
         const sid = storageId();
         let supported = false;
-        // no local storage in sandbox mode
-        if (!pxt.shell.isSandboxMode()) {
-            try {
-                window.localStorage[sid] = '1';
-                let v = window.localStorage[sid];
-                supported = true;
-            } catch (e) { }
-        }
+
+        try {
+            window.localStorage[sid] = '1';
+            let v = window.localStorage[sid];
+            supported = true;
+        } catch (e) { }
 
         if (!supported) {
             impl = new MemoryStorage();

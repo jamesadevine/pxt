@@ -336,6 +336,9 @@ export class Editor extends srceditor.Editor {
             this.editor.zoomCenter(-4);
         this.editor.addChangeListener((ev) => {
             Blockly.Events.disableOrphans(ev);
+
+            pxt.analytics.trackBlocklyEvent(ev, this.editor);
+
             if (ev.type != 'ui') {
                 this.changeCallback();
             }
