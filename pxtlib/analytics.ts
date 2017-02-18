@@ -49,20 +49,10 @@ namespace pxt.analytics {
     export function enable() {
         console.log("analytics enabled");
 
-        let ai = new pxt.analytics.Tracker();
+        let ai = new pxt.analytics.Tracker(1000);
 
 
         enabled = true;
-
-        setInterval(()=>{
-            console.log("retrieving");
-            for(let i = 0; i < namespaceArray.length; i++)
-            {
-                console.log(namespaceArray[i], ai.get(namespaceArray[i]));
-
-                ai.clear(namespaceArray[i]);
-            }
-        }, 10000);
 
         pxt.debug('enabling app insights')
 

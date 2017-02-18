@@ -1,4 +1,5 @@
 /// <reference path="../pxteditor/localStorage.ts" />
+/// <reference path ="../typings/globals/jquery/index.d.ts"/>
 
 namespace pxt.analytics {
 
@@ -237,18 +238,58 @@ namespace pxt.analytics {
     export class Tracker
     {
         address: string;
+        ids:string[];
 
-        constructor()
+        serverUrl: string;
+
+        interval: number;
+
+        constructor(communicatorTimer:number, url?: string)
         {
+            this.ids = [];
+            this.serverUrl = url || "http://scc-devine.lancs.ac.uk:8000/api/event";
+            this.interval = setInterval(this.communicator,communicatorTimer)
             window.trackingManager = this;
         }
 
-        /*
-            @param id keystore identifier used for storing records.
-        */
+        communicator()
+        {
+            let parent = window.trackingManager;
+            console.log("COMMUNICATOR ");
+            console.log(parent.ids, this);
+
+            for(let i = 0; i < parent.ids.length; i++)
+            {
+                let data:any = parent.get(parent.ids[i]);
+                console.log(parent.ids[i], data);
+
+                if(data == null)
+                    continue;
+
+                jQuery.ajax({
+                    type:"POST",
+                    url: parent.serverUrl,
+                    data: JSON.stringify({
+                        data:data
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType:"json"
+                }).done(function(data){
+                    console.log(data);
+                })
+
+                parent.clear(parent.ids[i]);
+            }
+        }
+
         trackEvent(id : string, event:TrackedEvent)
         {
+            console.log("IDS: ",this.ids);
             console.log("STORING: ",id, event);
+
+            if(this.ids.indexOf(id) == -1)
+                this.ids.push(id);
+
             this.store(id, event);
         }
 
