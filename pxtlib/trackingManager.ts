@@ -279,7 +279,7 @@ namespace pxt.analytics {
                     type:"POST",
                     url: parent.serverUrl,
                     data: JSON.stringify({
-                        editor_version: pxt.analytics.EDITOR_VERSION,
+                        editor_version: EDITOR_VERSION,
                         data:data,
                         namespace:parent.ids[i]
                     }),
@@ -293,7 +293,7 @@ namespace pxt.analytics {
                         {
                             console.log("COOKIE RETRIEVED ",window.pxt_cookie);
                             // force ourselves onto the dom...
-                            jQuery("#logo").append('<p style="font-size:10px; position:absolute; bottom:0;">Editor Verison: ' + pxt.analytics.EDITOR_VERSION + ' ID: ' + window.pxt_cookie +'</p>')
+                            jQuery("#logo").append('<p style="font-size:10px; position:absolute; bottom:0;">Editor Verison: ' + EDITOR_VERSION + ' ID: ' + window.pxt_cookie +'</p>')
                         }
                     }
                     console.log(data);
