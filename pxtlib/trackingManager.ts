@@ -3,6 +3,8 @@
 
 namespace pxt.analytics {
 
+    let EDITOR_VERSION = "A";
+
     export class TrackedEvent
     {
         type: string;
@@ -252,6 +254,13 @@ namespace pxt.analytics {
             window.trackingManager = this;
         }
 
+        eatCookie(name:string): any
+        {
+            function escape(s:string) { return s.replace(/([.*+?\^${}()|\[\]\/\\])/g, '\\$1'); };
+            var match = document.cookie.match(RegExp('(?:^|;\\s*)' + escape(name) + '=([^;]*)'));
+            return match ? match[1] : null;
+        }
+
         communicator()
         {
             let parent = window.trackingManager;
@@ -270,11 +279,23 @@ namespace pxt.analytics {
                     type:"POST",
                     url: parent.serverUrl,
                     data: JSON.stringify({
-                        data:data
+                        editor_version: pxt.analytics.EDITOR_VERSION,
+                        data:data,
+                        namespace:parent.ids[i]
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType:"json"
                 }).done(function(data){
+                    if(!window.pxt_cookie)
+                    {
+                        window.pxt_cookie = parent.eatCookie("pxt_tracking");
+                        if(window.pxt_cookie != null)
+                        {
+                            console.log("COOKIE RETRIEVED ",window.pxt_cookie);
+                            // force ourselves onto the dom...
+                            jQuery("#logo").append('<p style="font-size:10px; position:absolute; bottom:0;">Editor Verison: ' + pxt.analytics.EDITOR_VERSION + ' ID: ' + window.pxt_cookie +'</p>')
+                        }
+                    }
                     console.log(data);
                 })
 
@@ -344,4 +365,4 @@ namespace pxt.analytics {
         }
     }
 }
-interface Window { trackingManager: pxt.analytics.Tracker; };
+interface Window { trackingManager: pxt.analytics.Tracker; pxt_cookie: string};
