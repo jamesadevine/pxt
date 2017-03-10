@@ -14,7 +14,7 @@ namespace pxt.analytics {
         constructor(type:string, data?:any)
         {
             this.type = type;
-            this.data = (data) ? data : null;
+            this.data = (data) ? data : undefined;
             this.timestamp = new Date().valueOf();
         }
     }
@@ -26,15 +26,51 @@ namespace pxt.analytics {
         srcId: string;
         srcClass: string;
         srcNodeName: string;
+        text:string;
+        path: string;
+        html: string;
 
-        constructor(evt:MouseEvent, type:string)
+        constructor(evt:any, type:string)
         {
             super(type)
+            let domElement = evt.srcElement || evt.target;
+
+            if(type == "click")
+            {
+                var temp = jQuery(domElement)[0].outerHTML;
+
+                this.html = temp
+                //console.log("DOM WITHOUT CHILD ", temp);
+            }
+            else
+                this.html = undefined;
+
+            //console.log("SRC ",domElement);
             this.x = evt.clientX;
             this.y = evt.clientY;
-            this.srcId = evt.srcElement.id;
-            this.srcNodeName = evt.srcElement.nodeName;
-            this.srcClass = evt.srcElement.className;
+            this.srcId = domElement.id;
+
+            this.srcNodeName = domElement.nodeName;
+            this.srcClass = domElement.className;
+            this.text = domElement.textContent || domElement.innerText;
+            if(evt.path)
+            {
+                let i = 0
+
+                this.path = "";
+                for(i = 0; i < evt.path.length - 3; i++)
+                {
+                    let el = evt.path[i];
+                    if(el instanceof Window)
+                    {}
+                    else
+                        this.path += "/"+el.nodeName + ((el.id && el.id.length > 0) ? "#"+ el.id : "") + ((el.className && el.className.length >0) ? "."+el.className.replace(" ",".") : "");
+                }
+
+                this.path = this.path.replace(/ /g,'');
+            }
+            else
+                this.path = undefined;
         }
     }
 

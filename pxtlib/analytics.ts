@@ -61,17 +61,34 @@ namespace pxt.analytics {
         }
 
         window.addEventListener("message", (event:any)=>{
-            console.log("RECIEVED", event);
+            let data = event.data;
 
-            if(event.type !== undefined && event.type === "analytics")
+            if(data.type && data.type == "pxteditor")
             {
-                window.trackingManager.trackEvent(SIMULATOR_NAMESPACE, new pxt.analytics.TrackedEvent(event.type, event.data));
+                window.trackingManager.trackEvent("EDITOR_MESSAGE", new TrackedEvent(data.action.toLowerCase()));
+            }
+
+            if(data.type !== undefined && data.type === "analytics")
+            {
+                console.log("SIMULATOR ",data);
+                window.trackingManager.trackEvent(SIMULATOR_NAMESPACE, new pxt.analytics.TrackedEvent(data.type, data.data));
             }
         }, false);
 
         window.onclick = function (ev : MouseEvent)
         {
-            window.trackingManager.trackEvent(WINDOW_NAMESPACE, new pxt.analytics.TrackedMouseEvent(ev, "click"));
+            console.log("CLICKED ",ev);
+            var target = jQuery(ev.srcElement || ev.target);
+
+            var tracking = "click"
+
+            if(target.parents('div.blocklyToolboxDiv').length)
+            {
+                console.log("filterning click");
+                tracking = "blockly_click"
+            }
+
+            window.trackingManager.trackEvent(WINDOW_NAMESPACE, new pxt.analytics.TrackedMouseEvent(ev, tracking));
         }
 
         window.onresize = function(ev: any)
