@@ -3,7 +3,7 @@
 
 namespace pxt.analytics {
 
-    let EDITOR_VERSION = "A";
+    let EDITOR_VERSION = "B";
 
     export class TrackedEvent
     {
