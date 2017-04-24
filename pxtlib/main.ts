@@ -36,6 +36,7 @@ namespace pxt {
     }
 
     export interface PxtOptions {
+        reconstruct?:boolean;
         debug?: boolean;
         light?: boolean; // low resource device
         wsPort?: number;

@@ -60,6 +60,7 @@ namespace pxt.blocks {
         block: Blockly.BlockDefinition;
     }
     let cachedBlocks: Map<CachedBlock> = {};
+    let tempBlocks:any = {};
     let searchElementCache: Map<Node> = {};
 
     export function blockSymbol(type: string): pxtc.SymbolInfo {
@@ -290,6 +291,16 @@ namespace pxt.blocks {
         return result;
     }
 
+    export function logBlocks()
+    {
+        console.log(JSON.stringify(tempBlocks));
+    }
+
+    export function listBlocks()
+    {
+        console.log(tempBlocks);
+    }
+
     function getOrAddSubcategory(parent: Element, name: string, nameid: string, weight: number, colour?: string, iconClass?: string) {
         const existing = parent.querySelector(`category[nameid="${nameid.toLowerCase()}"]`);
         if (existing) {
@@ -329,7 +340,17 @@ namespace pxt.blocks {
             }
         }
 
+
         cachedBlocks[id] = cachedBlock;
+
+        var temp:any = cachedBlock;
+
+        temp.attrNames = attrNames
+        temp.info = info;
+
+        tempBlocks[id] = temp;
+
+        console.log("INJECTING ",info);
         Blockly.Blocks[id] = cachedBlock.block;
 
         return true;
@@ -378,6 +399,8 @@ namespace pxt.blocks {
         const ns = (fn.attributes.blockNamespace || fn.namespace).split('.')[0];
         const instance = fn.kind == pxtc.SymbolKind.Method || fn.kind == pxtc.SymbolKind.Property;
         const nsinfo = info.apis.byQName[ns];
+
+        console.log("INIT BLOCK ",info);
 
         if (fn.attributes.help)
             block.setHelpUrl("/reference/" + fn.attributes.help.replace(/^\//, ''));
@@ -682,6 +705,8 @@ namespace pxt.blocks {
     }
 
     export function initBlocks(blockInfo: pxtc.BlocksInfo, toolbox?: Element, showCategories: boolean = true, blockSubset?: { [index: string]: number }): Element {
+
+        console.log("INIT BLOCKS ", blockInfo);
         init();
         initTooltip(blockInfo);
 

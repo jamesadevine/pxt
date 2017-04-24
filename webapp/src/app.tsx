@@ -23,6 +23,7 @@ import * as hidbridge from "./hidbridge";
 import * as share from "./share";
 import * as tutorial from "./tutorial";
 import * as editortoolbar from "./editortoolbar";
+import * as reconstructiontools from "./reconstruction";
 import * as filelist from "./filelist";
 import * as container from "./container";
 import * as scriptsearch from "./scriptsearch";
@@ -867,6 +868,7 @@ export class ProjectView
         this.editor.beforeCompile();
         if (simRestart) this.stopSimulator();
         let state = this.editor.snapshotState()
+        //console.log("Compile start ", new Date().valueOf());
         compiler.compileAsync({ native: true, forceEmit: true, preferredEditor: this.getPreferredEditor() })
             .then(resp => {
                 this.editor.setDiagnostics(this.editorFile, state)
@@ -886,6 +888,7 @@ export class ProjectView
                 pxt.reportException(e);
                 core.errorNotification(lf("Compilation failed, please contact support."));
             }).finally(() => {
+                //console.log("Compile finished ", new Date().valueOf());
                 this.setState({ compiling: false });
                 if (simRestart) this.runSimulator();
             })
@@ -1254,6 +1257,13 @@ ${compileService ? `<p>${lf("{0} version:", "C++ runtime")} <a href="${Util.html
         const blockActive = this.isBlocksActive();
         const javascriptActive = this.isJavaScriptActive();
 
+        const reconstructionStyle = {
+            "width":"100%",
+            "backgroundColor": "white",
+            "zIndex":1000,
+            "position":"relative"
+        }
+
         const consentCookie = () => {
             pxt.storage.setLocal(cookieKey, "1");
             this.forceUpdate();
@@ -1261,7 +1271,8 @@ ${compileService ? `<p>${lf("{0} version:", "C++ runtime")} <a href="${Util.html
 
         // update window title
         document.title = this.state.header ? `${this.state.header.name} - ${pxt.appTarget.name}` : pxt.appTarget.name;
-
+        /*{pxt.reconstruction.isEnabled() ?*/
+        /*: null}*/
         return (
             <div id='root' className={`full-abs ${this.state.hideEditorFloats || this.state.collapseEditorTools ? " hideEditorFloats" : ""} ${this.state.collapseEditorTools ? " collapsedEditorTools" : ""} ${this.state.fullscreen ? 'fullscreen' : ''} ${!sideDocs || !this.state.sideDocsLoadUrl || this.state.sideDocsCollapsed ? "" : "sideDocs"} ${pxt.shell.layoutTypeClass()} ${inTutorial ? "tutorial" : ""} ${pxt.options.light ? "light" : ""} ${pxt.BrowserUtils.isTouchEnabled() ? 'has-touch' : ''} ${showMenuBar ? '' : 'hideMenuBar'}`}>
                 {showMenuBar ?
@@ -1320,6 +1331,7 @@ ${compileService ? `<p>${lf("{0} version:", "C++ runtime")} <a href="${Util.html
                                 <div className="ui item widedesktop only"></div>
                             </div> : undefined}
                         </div>
+                        <div style={reconstructionStyle} id="reconstruction"><reconstructiontools.ReconstructionTools blockEditor={this.blocksEditor} ref="reconstruction" parent={this}/></div>
                     </div> : undefined}
                 {gettingStarted ?
                     <div id="getting-started-btn">
@@ -1514,8 +1526,13 @@ function initScreenshots() {
     }, false);
 }
 
+function enableReconstruction()
+{
+    pxt.reconstruction.enable();
+}
+
 function enableAnalytics() {
-    pxt.analytics.enable();
+    //pxt.analytics.enable();
     const stats: pxt.Map<string | number> = {}
     if (typeof window !== "undefined") {
         const screen = window.screen;
@@ -1673,6 +1690,7 @@ $(document).ready(() => {
     pxt.setupWebConfig((window as any).pxtConfig);
     const config = pxt.webConfig
     pxt.options.debug = /dbg=1/i.test(window.location.href);
+    pxt.options.reconstruct = /reconstruct=1/i.test(window.location.href);
     pxt.options.light = /light=1/i.test(window.location.href) || pxt.BrowserUtils.isARM() || pxt.BrowserUtils.isIE();
 
     const wsPortMatch = /ws=(\d+)/i.exec(window.location.href);
@@ -1683,6 +1701,9 @@ $(document).ready(() => {
     } else {
         pxt.options.wsPort = 3233;
     }
+
+    //if(pxt.options.reconstruct)
+        enableReconstruction();
 
     enableAnalytics()
     appcache.init();

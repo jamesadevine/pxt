@@ -13,7 +13,7 @@ namespace pxt.analytics {
 
     export function trackBlocklyEvent(ev: any, workspace:Blockly.Workspace)
     {
-        if(!enabled)
+        /*if(!enabled)
             enable();
 
         let blocklyDom = Blockly.Xml.workspaceToDom(workspace)
@@ -43,10 +43,11 @@ namespace pxt.analytics {
         }
 
         console.log("Blockly Event: ", event.log());
-        window.trackingManager.trackEvent(BLOCKLY_NAMESPACE, event.log());
+        window.trackingManager.trackEvent(BLOCKLY_NAMESPACE, event.log());*/
     }
 
     export function enable() {
+        /*
         console.log("analytics enabled");
 
         let ai = new pxt.analytics.Tracker(1000);
@@ -141,6 +142,6 @@ namespace pxt.analytics {
                 if (data) Util.jsonMergeFrom(props, data);
                 ai.trackException(err, 'error', props)
             }
-        }
+        }*/
     }
 }

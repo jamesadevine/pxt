@@ -841,7 +841,7 @@ export function serveAsync(options: ServeOptions) {
     if (!serveOptions.port) serveOptions.port = 3232;
     if (!serveOptions.wsPort) serveOptions.wsPort = 3233;
     setupRootDir();
-    const wsServerPromise = initSocketServer(serveOptions.wsPort);
+    //const wsServerPromise = initSocketServer(serveOptions.wsPort);
     if (serveOptions.serial)
         initSerialMonitor();
     if (serveOptions.electronHandlers) {
@@ -1043,7 +1043,7 @@ export function serveAsync(options: ServeOptions) {
         server.listen(serveOptions.port, "0.0.0.0", () => resolve());
     });
 
-    return Promise.all([wsServerPromise, serverPromise])
+    return Promise.all([serverPromise])
         .then(() => {
             let start = `http://localhost:${serveOptions.port}/#ws=${serveOptions.wsPort}&local_token=${options.localToken}`;
             console.log(`---------------------------------------------`);

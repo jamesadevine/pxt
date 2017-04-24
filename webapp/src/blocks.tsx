@@ -116,7 +116,7 @@ export class Editor extends srceditor.Editor {
         return xml;
     }
 
-    private loadBlockly(s: string): boolean {
+    loadBlockly(s: string): boolean {
         if (this.serializeBlocks() == s) {
             this.typeScriptSaveable = true;
             pxt.debug('blocks already loaded...');
